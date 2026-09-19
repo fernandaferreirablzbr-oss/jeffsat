@@ -1,0 +1,88 @@
+/* Only the hero and its handoff own these motion styles. The resting state is
+   visible and usable without JavaScript; no SSR opacity gates or splash screen. */
+ .hero-experience { background: var(--ink); }
+ html:has(.hero-experience) { scroll-padding-top: 112px; }
+ .hero-header-shell { position: fixed; inset: 0 0 auto; z-index: 50; color: #fff; border-bottom: 1px solid transparent; transition: background-color .25s ease, border-color .25s ease, color .25s ease; }
+ .hero-header-shell.is-past-hero { color: var(--ink); background: rgb(247 247 244 / 94%); border-bottom-color: rgb(8 11 10 / 9%); backdrop-filter: blur(10px); }
+ .hero-header-shell.is-past-hero .desktop-nav a:hover, .hero-header-shell.is-past-hero .mobile-contact { color: #ad4400; }
+ .hero-header-shell .brand { background: transparent; }
+ .hero-header-shell .brand img { object-fit: contain; }
+ .hero-header-shell .mobile-menu nav { color: #fff; }
+ .hero-header-shell.is-past-hero .mobile-menu nav { color: var(--ink); background: var(--paper); }
+ .hero-header-space { height: 104px; flex-shrink: 0; }
+ .hero-header-shell .mobile-menu nav { color: #fff; }
+ .hero-stage { position: relative; isolation: isolate; }
+ .hero-stage .hero { overflow: clip; }
+ .hero-stage .hero-photo { inset: 0; transform-origin: 65% 50%; }
+ .hero-stage .hero-photo > img, .hero-video { object-position: 70% 50%; object-fit: cover; }
+ .hero-video-layer { position: absolute; inset: 0; opacity: 0; transition: opacity .7s ease; }
+ .hero-video-layer[data-ready="true"] { opacity: 1; }
+ .hero-video { width: 100%; height: 100%; display: block; }
+ .hero-loop-shade, .hero-scroll-shade { position: absolute; inset: 0; background: var(--ink); pointer-events: none; opacity: 0; }
+ .hero-loop-shade { transition: opacity .65s ease; }
+ .hero-video-layer[data-loop-edge="true"] .hero-loop-shade { opacity: .2; }
+ .hero-line-mask, .hero-line { display: block; }
+ .hero-line-mask { overflow: clip; }
+ .hero-prefix-que, .hero-generate { display: inline-block; }
+ .hero-scene-controls { position: absolute; inset: auto 0 23px; display: flex; justify-content: flex-end; align-items: center; gap: 15px; pointer-events: none; color: #fff; }
+ .hero-scene-controls > * { pointer-events: auto; }
+ .hero-video-control { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid #818783; color: #fff; background: rgb(8 11 10 / 40%); }
+ .hero-video-control:hover { border-color: var(--orange); color: var(--orange); }
+ .hero-scroll-indicator { display: flex; align-items: center; min-height: 44px; gap: 10px; font-size: 9px; letter-spacing: .12em; }
+ .hero-scroll-indicator svg { color: var(--orange); }
+ .hero-stage .button { transition: background-color .2s ease, border-color .2s ease, color .2s ease; }
+ .hero-transition, .hero-signature-position { position: absolute; inset: 50% 0 auto; pointer-events: none; }
+ .hero-transition { opacity: 0; color: #fff; transform: translateY(-42%); }
+ .hero-transition-title { font-size: clamp(35px, 4.5vw, 66px); letter-spacing: -.045em; line-height: 1.1; font-weight: 400; margin: 0; }
+ .hero-transition-line { display: block; }
+ .hero-transition-title strong { font-weight: 650; }
+ .hero-transition-title strong:first-of-type { margin-top: .25em; }
+ .hero-signature-position { top: 72%; }
+ .hero-signature { display: block; width: min(46vw, 620px); height: 1px; opacity: 0; transform-origin: left center; background: var(--orange); }
+  
+/* Purpose section that sits below the hero and slides up during transition */
+.purpose-standalone { position: relative; isolation: isolate; background: var(--paper); overflow: clip; }
+.purpose-line { display: block; overflow: hidden; }
+.purpose-rule { display: block; width: 54px; height: 1px; margin: 14px 0 42px; background: var(--orange); transform: scaleX(0); transform-origin: left center; }
+.purpose-eyebrow, .purpose-copy > .muted, .manifesto { will-change: transform, opacity; }
+  
+ .hero-actions-scroll:focus-within, .hero-scene-controls:focus-within { opacity: 1 !important; }
+ .hero-story[data-active="true"] .hero-photo { will-change: transform; }
+  
+@media (prefers-reduced-motion: no-preference) and (min-height: 700px) {
+    .hero-story { height: 170svh; }
+    .hero-stage { position: sticky; top: 0; height: 100svh; }
+    .hero-stage .hero { min-height: 0; height: 100%; max-height: none; }
+    .purpose-standalone { position: relative; }
+  }
+ @media (min-width: 768px) { .hero-stage .hero-bottom { padding-right: 155px; } }
+ @media (max-width: 1023px) { .hero-stage .hero-bottom { padding-right: 115px; }.hero-scroll-indicator span { display: none; } }
+ @media (max-width: 767px) {
+   .hero-header-space { height: 89px; }
+   .hero-stage .hero-photo > img, .hero-video { object-position: 64% 50%; }
+   .hero-stage .hero-bottom { padding-right: 0; padding-bottom: 81px; }
+   .hero-scene-controls { bottom: 17px; gap: 12px; }
+   .hero-scroll-indicator span { display: inline; }
+   .hero-transition-title { font-size: clamp(30px, 8.1vw, 42px); }
+   .hero-transition { transform: translateY(-35%); }
+   .hero-signature { width: 72%; }
+   .purpose-rule { margin: -4px 0 28px; }
+   html:has(.hero-experience) { scroll-padding-top: 96px; }
+   .hero-scroll-indicator { margin-right: 52px; }
+  }
+@media (prefers-reduced-motion: no-preference) and (max-width: 767px) and (min-height: 700px) {
+    .hero-story { height: 135svh; }
+    .hero-stage .hero-main { padding-top: 48px; padding-bottom: 18px; }
+    .hero-stage .hero-description { margin-bottom: 20px; }
+    .hero-stage .hero-actions .button { min-height: 44px; }
+    .hero-stage h1 { font-size: clamp(47px, 10.6vw, 70px); }
+    .hero-stage .hero-bottom { padding-top: 8px; row-gap: 14px; }
+  }
+@media (prefers-reduced-motion: reduce) {
+    .hero-signature-position, .hero-video-control, .hero-video-layer { display: none; }
+    .hero-header-shell, .hero-stage .button { transition: none; }
+    .hero-story { height: auto; }
+    .hero-stage { position: relative; height: auto; }
+    .purpose-standalone { position: relative; }
+    html:has(.hero-experience) { scroll-padding-top: 112px; }
+  }

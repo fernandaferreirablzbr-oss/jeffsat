@@ -1,0 +1,6 @@
+{
+  "name": "JeffSat Tecnologias",
+  "description": "Soluções integradas em energia solar, segurança eletrônica, conectividade e mobilidade elétrica para residências e empresas em Palmares - PE.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
