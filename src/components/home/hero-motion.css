@@ -74,7 +74,9 @@
    .hero-scroll-indicator { margin-right: 52px; }
   }
 @media (prefers-reduced-motion: no-preference) and (max-width: 767px) {
-     .hero-story { height: 185svh; }
+     .hero-story { height: auto; }
+     .hero-stage { position: relative; height: 100svh; }
+     .hero-stage .hero { min-height: 0; height: 100%; max-height: none; }
      .purpose-standalone { margin-top: -22svh; border-radius: 22px 22px 0 0; z-index: 1; }
      .hero-stage .hero-main { padding-top: 48px; padding-bottom: 18px; }
     .hero-stage .hero-description { margin-bottom: 20px; }

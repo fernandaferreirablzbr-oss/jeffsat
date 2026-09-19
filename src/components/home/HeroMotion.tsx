@@ -106,14 +106,16 @@ export function HeroMotion({ children, header }: Props) {
         const { reduce, desktop, touch, mobile, roomy } = match.conditions!;
         const select = gsap.utils.selector(element);
         const story = element.querySelector<HTMLElement>(".hero-story")!;
+        const stage = element.querySelector<HTMLElement>(".hero-stage")!;
         const shell = element.querySelector<HTMLElement>(".hero-header-shell")!;
+        const mobileStoryEnd = () => `+=${window.innerHeight * 1.8}`;
         const setHeader = (pastHero: boolean, inStory = false) => {
           shell.classList.toggle("is-past-hero", pastHero);
           shell.classList.toggle("is-storytelling", !pastHero && inStory);
         };
         ScrollTrigger.create({
           id: "jeffsat-header", trigger: story,
-          start: "top top", end: "bottom top",
+          start: "top top", end: mobile ? mobileStoryEnd : "bottom top",
           onEnter: () => setHeader(false, false),
           onLeave: () => setHeader(true),
           onEnterBack: () => setHeader(false, true),
@@ -144,7 +146,8 @@ export function HeroMotion({ children, header }: Props) {
         const storyTimeline = gsap.timeline({
           defaults: { ease: "none" },
           scrollTrigger: {
-            id: "jeffsat-story", trigger: story, start: "top top", end: "bottom bottom",
+            id: "jeffsat-story", trigger: story, start: "top top", end: mobile ? mobileStoryEnd : "bottom bottom",
+            pin: mobile ? stage : false,
             scrub: desktop ? 0.45 : 0.25, invalidateOnRefresh: true,
             onUpdate: self => {
               if (self.progress > 0.01 && enter.isActive()) enter.progress(1).kill();
@@ -157,28 +160,51 @@ export function HeroMotion({ children, header }: Props) {
         // The existing headline becomes the scroll story. It is untouched at
         // progress 0, then its three existing words take focus in sequence.
         const heroStory = gsap.timeline({ defaults: { ease: "power1.inOut" } });
-        heroStory
-          .fromTo(select(".hero-photo"), { scale: 1 }, { scale: desktop ? 1.01 : 1.005, duration: 0.4 }, 0)
-          .fromTo(select(".hero-description"), { opacity: 1 }, { opacity: 0, duration: 0.2 }, 0.35)
-          .fromTo(select(".hero-actions"), { opacity: 1 }, { opacity: 0, duration: 0.2 }, 0.4)
-          .fromTo(select(".hero-bottom"), { opacity: 1 }, { opacity: 0, duration: 0.2 }, 0.45)
-          .fromTo(select(".hero-location"), { opacity: 1 }, { opacity: 0, duration: 0.15 }, 0.5)
-          .fromTo(select(".hero-eyebrow-scroll"), { opacity: 1 }, { opacity: 0, duration: 0.2 }, 0.55)
-          .fromTo(select(".hero-prefix-line"), { opacity: 1, y: 0 }, { opacity: 0, y: desktop ? -15 : -10, duration: 0.2 }, 0.6)
-          .fromTo(select(".hero-prefix-que"), { opacity: 1 }, { opacity: 0, duration: 0.15 }, 0.65)
-          .to(select(".hero-protect-line, .hero-connect-line"), { opacity: 0.22, duration: 0.08 }, 0.15)
-          .fromTo(select(".hero-generate"), { opacity: 1, y: desktop ? 40 : 24, scale: 0.98 }, { opacity: 1, y: 0, scale: desktop ? 1.04 : 1.02, transformOrigin: "left center", duration: 0.12, immediateRender: false }, 0.15)
-          .to(select(".hero-generate"), { scale: 1, duration: 0.12 }, 0.27)
-          .fromTo(select(".hero-protect-line"), { opacity: 0.22, y: desktop ? 40 : 24 }, { opacity: 1, y: 0, duration: 0.1, immediateRender: false }, 0.41)
-          .to(select(".hero-generate"), { opacity: 0.22, y: desktop ? -35 : -22, duration: 0.1 }, 0.41)
-          .fromTo(select(".hero-connect-line"), { opacity: 0.22, y: desktop ? 40 : 24 }, { opacity: 1, y: 0, duration: 0.1, immediateRender: false }, 0.67)
-          .to(select(".hero-protect-line"), { opacity: 0.22, y: desktop ? -35 : -22, duration: 0.1 }, 0.67)
-          .to(select(".hero-connect-line"), { opacity: 1, y: 0, scale: 1, duration: 0.1 }, 0.77)
-          .to(select(".hero-scroll-shade"), { opacity: 0.1, duration: 0.12 }, 0.15)
-          .to(select(".hero-scroll-shade"), { opacity: 0, duration: 0.12 }, 0.82)
-          .to(select(".hero-description, .hero-actions, .hero-bottom, .hero-location, .hero-eyebrow-scroll"), { opacity: 1, y: 0, duration: 0.12 }, 0.82)
-          .to(select(".hero-headline"), { opacity: 1, y: 0, duration: 0.12 }, 0.82)
-          .to(select(".hero-prefix-line, .hero-prefix-que"), { opacity: 1, y: 0, duration: 0.12 }, 0.82);
+        if (mobile) {
+          heroStory
+            .fromTo(select(".hero-photo"), { scale: 1 }, { scale: 1.005, duration: 0.42 }, 0)
+            .fromTo(select(".hero-description"), { opacity: 1 }, { opacity: 0, duration: 0.16 }, 0.12)
+            .fromTo(select(".hero-actions"), { opacity: 1 }, { opacity: 0, duration: 0.16 }, 0.14)
+            .fromTo(select(".hero-bottom"), { opacity: 1 }, { opacity: 0, duration: 0.16 }, 0.16)
+            .fromTo(select(".hero-location"), { opacity: 1 }, { opacity: 0, duration: 0.14 }, 0.18)
+            .fromTo(select(".hero-eyebrow-scroll"), { opacity: 1 }, { opacity: 0, duration: 0.14 }, 0.2)
+            .fromTo(select(".hero-prefix-line"), { opacity: 1, y: 0 }, { opacity: 0, y: -10, duration: 0.16 }, 0.22)
+            .fromTo(select(".hero-prefix-que"), { opacity: 1 }, { opacity: 0, duration: 0.12 }, 0.24)
+            .to(select(".hero-protect-line, .hero-connect-line"), { opacity: 0.22, duration: 0.04 }, 0.12)
+            .fromTo(select(".hero-generate"), { opacity: 1, y: 24, scale: 0.98 }, { opacity: 1, y: 0, scale: 1.02, transformOrigin: "left center", duration: 0.08, immediateRender: false }, 0.15)
+            .to(select(".hero-generate"), { opacity: 1, y: 0, scale: 1, duration: 0.16 }, 0.22)
+            .to(select(".hero-generate"), { opacity: 0.22, y: -22, duration: 0.08 }, 0.38)
+            .fromTo(select(".hero-protect-line"), { opacity: 0.22, y: 24 }, { opacity: 1, y: 0, duration: 0.08, immediateRender: false }, 0.38)
+            .to(select(".hero-protect-line"), { opacity: 1, y: 0, duration: 0.15 }, 0.46)
+            .to(select(".hero-protect-line"), { opacity: 0.22, y: -22, duration: 0.08 }, 0.61)
+            .fromTo(select(".hero-connect-line"), { opacity: 0.22, y: 24 }, { opacity: 1, y: 0, duration: 0.08, immediateRender: false }, 0.61)
+            .to(select(".hero-connect-line"), { opacity: 1, y: 0, scale: 1, duration: 0.23 }, 0.69)
+            .to(select(".hero-scroll-shade"), { opacity: 0.1, duration: 0.12 }, 0.15)
+            .to(select(".hero-scroll-shade"), { opacity: 0, duration: 0.08 }, 0.92);
+        } else {
+          heroStory
+            .fromTo(select(".hero-photo"), { scale: 1 }, { scale: 1.01, duration: 0.4 }, 0)
+            .fromTo(select(".hero-description"), { opacity: 1 }, { opacity: 0, duration: 0.2 }, 0.35)
+            .fromTo(select(".hero-actions"), { opacity: 1 }, { opacity: 0, duration: 0.2 }, 0.4)
+            .fromTo(select(".hero-bottom"), { opacity: 1 }, { opacity: 0, duration: 0.2 }, 0.45)
+            .fromTo(select(".hero-location"), { opacity: 1 }, { opacity: 0, duration: 0.15 }, 0.5)
+            .fromTo(select(".hero-eyebrow-scroll"), { opacity: 1 }, { opacity: 0, duration: 0.2 }, 0.55)
+            .fromTo(select(".hero-prefix-line"), { opacity: 1, y: 0 }, { opacity: 0, y: -15, duration: 0.2 }, 0.6)
+            .fromTo(select(".hero-prefix-que"), { opacity: 1 }, { opacity: 0, duration: 0.15 }, 0.65)
+            .to(select(".hero-protect-line, .hero-connect-line"), { opacity: 0.22, duration: 0.08 }, 0.15)
+            .fromTo(select(".hero-generate"), { opacity: 1, y: 40, scale: 0.98 }, { opacity: 1, y: 0, scale: 1.04, transformOrigin: "left center", duration: 0.12, immediateRender: false }, 0.15)
+            .to(select(".hero-generate"), { scale: 1, duration: 0.12 }, 0.27)
+            .fromTo(select(".hero-protect-line"), { opacity: 0.22, y: 40 }, { opacity: 1, y: 0, duration: 0.1, immediateRender: false }, 0.41)
+            .to(select(".hero-generate"), { opacity: 0.22, y: -35, duration: 0.1 }, 0.41)
+            .fromTo(select(".hero-connect-line"), { opacity: 0.22, y: 40 }, { opacity: 1, y: 0, duration: 0.1, immediateRender: false }, 0.67)
+            .to(select(".hero-protect-line"), { opacity: 0.22, y: -35, duration: 0.1 }, 0.67)
+            .to(select(".hero-connect-line"), { opacity: 1, y: 0, scale: 1, duration: 0.1 }, 0.77)
+            .to(select(".hero-scroll-shade"), { opacity: 0.1, duration: 0.12 }, 0.15)
+            .to(select(".hero-scroll-shade"), { opacity: 0, duration: 0.12 }, 0.82)
+            .to(select(".hero-description, .hero-actions, .hero-bottom, .hero-location, .hero-eyebrow-scroll"), { opacity: 1, y: 0, duration: 0.12 }, 0.82)
+            .to(select(".hero-headline"), { opacity: 1, y: 0, duration: 0.12 }, 0.82)
+            .to(select(".hero-prefix-line, .hero-prefix-que"), { opacity: 1, y: 0, duration: 0.12 }, 0.82);
+        }
 
         storyTimeline.add(heroStory, 0);
 
@@ -213,7 +239,7 @@ export function HeroMotion({ children, header }: Props) {
             gsap.set([purposeEyebrow, purposeRule, purposeBody, manifesto], { opacity: 0 });
             gsap.set([purposeEyebrow, purposeBody, manifesto], { y: 10 });
             gsap.set(purposeRule, { scaleX: 0 });
-            gsap.set(purposeChars, { opacity: 0.08 });
+            gsap.set(purposeChars, { autoAlpha: 0 });
             gsap.set(purposeCursor, { opacity: 0 });
 
             gsap.timeline({
@@ -222,7 +248,7 @@ export function HeroMotion({ children, header }: Props) {
                 id: "jeffsat-purpose-mobile-handoff",
                 trigger: purposeEl,
                 start: "top bottom",
-                end: "+=145svh",
+                end: () => `+=${window.innerHeight * 1.45}`,
                 scrub: 0.25,
                 invalidateOnRefresh: true,
                 onUpdate: self => updateCursor(self.progress),
@@ -233,8 +259,8 @@ export function HeroMotion({ children, header }: Props) {
               .to(purposeEyebrow, { opacity: 1, y: 0, duration: 0.1 }, 0.3)
               .to(purposeRule, { opacity: 1, scaleX: 1, duration: 0.1 }, 0.36)
               .to(purposeCursor, { opacity: 1, duration: 0.04 }, 0.4)
-              .to(purposeChars, { opacity: 1, duration: 0.42, stagger: { each: 0.006, from: "start" } }, 0.4)
-              .to(purposeCursor, { opacity: 0, duration: 0.1 }, 0.82)
+              .to(purposeChars, { autoAlpha: 1, duration: 0.03, stagger: { amount: 0.42, from: "start" } }, 0.4)
+              .to(purposeCursor, { opacity: 0, duration: 0.08 }, 0.86)
               .to([purposeBody, manifesto], { opacity: 1, y: 0, duration: 0.08, stagger: 0.03 }, 0.92);
 
           } else {
