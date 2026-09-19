@@ -42,9 +42,12 @@
   
 /* Purpose section that sits below the hero and slides up during transition */
 .purpose-standalone { position: relative; isolation: isolate; background: var(--paper); overflow: clip; }
+.purpose-copy h2 { position: relative; }
 .purpose-line { display: block; overflow: hidden; }
+.purpose-char { display: inline; }
+.purpose-cursor { position: absolute; left: 0; top: 0; width: 1.5px; background: var(--orange); pointer-events: none; opacity: 0; }
 .purpose-rule { display: block; width: 54px; height: 1px; margin: 14px 0 42px; background: var(--orange); transform: scaleX(0); transform-origin: left center; }
-.purpose-eyebrow, .purpose-copy > .muted, .manifesto { will-change: transform, opacity; }
+.purpose-eyebrow, .purpose-copy > .muted, .manifesto, .purpose-char, .purpose-cursor { will-change: transform, opacity; }
   
  .hero-actions-scroll:focus-within, .hero-scene-controls:focus-within { opacity: 1 !important; }
  .hero-story[data-active="true"] .hero-photo { will-change: transform; }
@@ -56,10 +59,10 @@
     .purpose-standalone { position: relative; }
   }
  @media (min-width: 768px) { .hero-stage .hero-bottom { padding-right: 155px; } }
- @media (max-width: 1023px) { .hero-stage .hero-bottom { padding-right: 115px; }.hero-scroll-indicator span { display: none; } }
+ @media (max-width: 1023px) { .hero-header-shell { transition: background-color .32s ease, border-color .32s ease, color .25s ease, backdrop-filter .32s ease; }.hero-header-shell.is-storytelling { background: rgb(8 11 10 / 80%); border-bottom-color: rgb(255 255 255 / 8%); backdrop-filter: blur(12px); }.hero-stage .hero-bottom { padding-right: 115px; }.hero-scroll-indicator span { display: none; } }
  @media (max-width: 767px) {
    .hero-header-space { height: 89px; }
-   .hero-stage .hero-photo > img, .hero-video { object-position: 64% 50%; }
+   .hero-stage .hero-photo > img, .hero-video { object-position: 58% 50%; }
    .hero-stage .hero-bottom { padding-right: 0; padding-bottom: 81px; }
    .hero-scene-controls { bottom: 17px; gap: 12px; }
    .hero-scroll-indicator span { display: inline; }
@@ -70,13 +73,23 @@
    html:has(.hero-experience) { scroll-padding-top: 96px; }
    .hero-scroll-indicator { margin-right: 52px; }
   }
-@media (prefers-reduced-motion: no-preference) and (max-width: 767px) and (min-height: 700px) {
-    .hero-story { height: 135svh; }
-    .hero-stage .hero-main { padding-top: 48px; padding-bottom: 18px; }
+@media (prefers-reduced-motion: no-preference) and (max-width: 767px) {
+     .hero-story { height: 185svh; }
+     .purpose-standalone { margin-top: -22svh; border-radius: 22px 22px 0 0; z-index: 1; }
+     .hero-stage .hero-main { padding-top: 48px; padding-bottom: 18px; }
     .hero-stage .hero-description { margin-bottom: 20px; }
     .hero-stage .hero-actions .button { min-height: 44px; }
     .hero-stage h1 { font-size: clamp(47px, 10.6vw, 70px); }
     .hero-stage .hero-bottom { padding-top: 8px; row-gap: 14px; }
+  }
+@media (max-width: 390px) {
+    .hero-stage .hero-photo > img, .hero-video { object-position: 56% 50%; }
+  }
+@media (min-width: 391px) and (max-width: 430px) {
+    .hero-stage .hero-photo > img, .hero-video { object-position: 60% 50%; }
+  }
+@media (min-width: 431px) and (max-width: 767px) {
+    .hero-stage .hero-photo > img, .hero-video { object-position: 62% 50%; }
   }
 @media (prefers-reduced-motion: reduce) {
     .hero-signature-position, .hero-video-control, .hero-video-layer { display: none; }

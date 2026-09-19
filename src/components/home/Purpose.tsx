@@ -1,5 +1,12 @@
 import Image from "next/image";
 
+const headlineLines = [
+  "A tecnologia está",
+  "em tudo.",
+  "Nós conectamos",
+  "as partes.",
+];
+
 export function Purpose() {
   return (
     <section
@@ -11,13 +18,14 @@ export function Purpose() {
         <div className="purpose-copy">
           <p className="eyebrow purpose-eyebrow">NOSSO PROPÓSITO</p>
           <span className="purpose-rule" aria-hidden="true" />
-          <h2 id="purpose-title">
-            <span className="purpose-line">A tecnologia está</span>
-            <span className="purpose-line">em tudo.</span>
+          <h2 id="purpose-title" aria-label="A tecnologia está em tudo. Nós conectamos as partes.">
+            <span className="purpose-line" aria-hidden="true">{headlineLines[0].split("").map((char, index) => <span className="purpose-char" key={`${char}-${index}`}>{char === " " ? "\u00a0" : char}</span>)}</span>
+            <span className="purpose-line" aria-hidden="true">{headlineLines[1].split("").map((char, index) => <span className="purpose-char" key={`${char}-${index}`}>{char === " " ? "\u00a0" : char}</span>)}</span>
             <strong>
-              <span className="purpose-line">Nós conectamos</span>
-              <span className="purpose-line">as partes.</span>
+              <span className="purpose-line" aria-hidden="true">{headlineLines[2].split("").map((char, index) => <span className="purpose-char" key={`${char}-${index}`}>{char === " " ? "\u00a0" : char}</span>)}</span>
+              <span className="purpose-line" aria-hidden="true">{headlineLines[3].split("").map((char, index) => <span className="purpose-char" key={`${char}-${index}`}>{char === " " ? "\u00a0" : char}</span>)}</span>
             </strong>
+            <span className="purpose-cursor" aria-hidden="true" />
           </h2>
           <p className="muted">
             A JeffSat Tecnologias reúne soluções em energia, segurança e

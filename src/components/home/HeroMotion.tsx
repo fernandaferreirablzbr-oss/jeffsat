@@ -99,27 +99,30 @@ export function HeroMotion({ children, header }: Props) {
       media.add({
         reduce: "(prefers-reduced-motion: reduce)",
         desktop: "(min-width: 768px)",
+        touch: "(max-width: 1023px)",
+        mobile: "(max-width: 767px)",
         roomy: "(min-height: 700px)",
       }, (match) => {
-        const { reduce, desktop, roomy } = match.conditions!;
+        const { reduce, desktop, touch, mobile, roomy } = match.conditions!;
         const select = gsap.utils.selector(element);
         const story = element.querySelector<HTMLElement>(".hero-story")!;
         const shell = element.querySelector<HTMLElement>(".hero-header-shell")!;
-        const setHeader = (pastHero: boolean) => {
+        const setHeader = (pastHero: boolean, inStory = false) => {
           shell.classList.toggle("is-past-hero", pastHero);
+          shell.classList.toggle("is-storytelling", !pastHero && inStory);
         };
         ScrollTrigger.create({
           id: "jeffsat-header", trigger: story,
           start: "top top", end: "bottom top",
-          onEnter: () => setHeader(false),
+          onEnter: () => setHeader(false, false),
           onLeave: () => setHeader(true),
-          onEnterBack: () => setHeader(false),
-          onLeaveBack: () => setHeader(false),
-          onUpdate: self => setHeader(self.progress >= 1),
-          onRefresh: self => setHeader(self.progress >= 1),
+          onEnterBack: () => setHeader(false, true),
+          onLeaveBack: () => setHeader(false, false),
+          onUpdate: self => setHeader(self.progress >= 1, touch && self.progress > 0.03 && self.progress < 1),
+          onRefresh: self => setHeader(self.progress >= 1, touch && self.progress > 0.03 && self.progress < 1),
         });
 
-        if (reduce) return () => shell.classList.remove("is-past-hero");
+        if (reduce) return () => shell.classList.remove("is-past-hero", "is-storytelling");
 
         const enter = gsap.timeline({ defaults: { ease: "power3.out" } });
         const atBeginning = window.scrollY < 24 && (!location.hash || ["#inicio", "#conteudo"].includes(location.hash));
@@ -136,7 +139,7 @@ export function HeroMotion({ children, header }: Props) {
           introduced.current = true;
         }
 
-        if (!roomy) return () => shell.classList.remove("is-past-hero");
+        if (!roomy && !mobile) return () => shell.classList.remove("is-past-hero", "is-storytelling");
 
         const storyTimeline = gsap.timeline({
           defaults: { ease: "none" },
@@ -145,6 +148,7 @@ export function HeroMotion({ children, header }: Props) {
             scrub: desktop ? 0.45 : 0.25, invalidateOnRefresh: true,
             onUpdate: self => {
               if (self.progress > 0.01 && enter.isActive()) enter.progress(1).kill();
+              if (touch && self.progress < 0.98) setHeader(false, self.progress > 0.03);
             },
             onToggle: self => { story.dataset.active = String(self.isActive); },
           },
@@ -160,15 +164,15 @@ export function HeroMotion({ children, header }: Props) {
           .fromTo(select(".hero-bottom"), { opacity: 1 }, { opacity: 0, duration: 0.2 }, 0.45)
           .fromTo(select(".hero-location"), { opacity: 1 }, { opacity: 0, duration: 0.15 }, 0.5)
           .fromTo(select(".hero-eyebrow-scroll"), { opacity: 1 }, { opacity: 0, duration: 0.2 }, 0.55)
-          .fromTo(select(".hero-prefix-line"), { opacity: 1, y: 0 }, { opacity: 0, y: desktop ? -15 : -8, duration: 0.2 }, 0.6)
+          .fromTo(select(".hero-prefix-line"), { opacity: 1, y: 0 }, { opacity: 0, y: desktop ? -15 : -10, duration: 0.2 }, 0.6)
           .fromTo(select(".hero-prefix-que"), { opacity: 1 }, { opacity: 0, duration: 0.15 }, 0.65)
           .to(select(".hero-protect-line, .hero-connect-line"), { opacity: 0.22, duration: 0.08 }, 0.15)
-          .fromTo(select(".hero-generate"), { opacity: 1, y: 40, scale: 0.98 }, { opacity: 1, y: 0, scale: desktop ? 1.04 : 1.02, transformOrigin: "left center", duration: 0.12, immediateRender: false }, 0.15)
+          .fromTo(select(".hero-generate"), { opacity: 1, y: desktop ? 40 : 24, scale: 0.98 }, { opacity: 1, y: 0, scale: desktop ? 1.04 : 1.02, transformOrigin: "left center", duration: 0.12, immediateRender: false }, 0.15)
           .to(select(".hero-generate"), { scale: 1, duration: 0.12 }, 0.27)
-          .fromTo(select(".hero-protect-line"), { opacity: 0.22, y: 40 }, { opacity: 1, y: 0, duration: 0.1, immediateRender: false }, 0.41)
-          .to(select(".hero-generate"), { opacity: 0.22, y: desktop ? -35 : -24, duration: 0.1 }, 0.41)
-          .fromTo(select(".hero-connect-line"), { opacity: 0.22, y: 40 }, { opacity: 1, y: 0, duration: 0.1, immediateRender: false }, 0.67)
-          .to(select(".hero-protect-line"), { opacity: 0.22, y: desktop ? -35 : -24, duration: 0.1 }, 0.67)
+          .fromTo(select(".hero-protect-line"), { opacity: 0.22, y: desktop ? 40 : 24 }, { opacity: 1, y: 0, duration: 0.1, immediateRender: false }, 0.41)
+          .to(select(".hero-generate"), { opacity: 0.22, y: desktop ? -35 : -22, duration: 0.1 }, 0.41)
+          .fromTo(select(".hero-connect-line"), { opacity: 0.22, y: desktop ? 40 : 24 }, { opacity: 1, y: 0, duration: 0.1, immediateRender: false }, 0.67)
+          .to(select(".hero-protect-line"), { opacity: 0.22, y: desktop ? -35 : -22, duration: 0.1 }, 0.67)
           .to(select(".hero-connect-line"), { opacity: 1, y: 0, scale: 1, duration: 0.1 }, 0.77)
           .to(select(".hero-scroll-shade"), { opacity: 0.1, duration: 0.12 }, 0.15)
           .to(select(".hero-scroll-shade"), { opacity: 0, duration: 0.12 }, 0.82)
@@ -184,8 +188,56 @@ export function HeroMotion({ children, header }: Props) {
           const purposeEyebrow = purposeEl.querySelector<HTMLElement>(".purpose-eyebrow");
           const purposeRule = purposeEl.querySelector<HTMLElement>(".purpose-rule");
           const purposeLines = purposeEl.querySelectorAll<HTMLElement>(".purpose-line");
+          const purposeChars = purposeEl.querySelectorAll<HTMLElement>(".purpose-char");
+          const purposeTitle = purposeEl.querySelector<HTMLElement>("#purpose-title");
+          const purposeCursor = purposeEl.querySelector<HTMLElement>(".purpose-cursor");
           const purposeBody = purposeEl.querySelector<HTMLElement>(".purpose-copy > .muted");
           const manifesto = purposeEl.querySelector<HTMLElement>(".manifesto");
+
+          if (mobile) {
+            const updateCursor = (progress: number) => {
+              if (!purposeCursor || !purposeTitle || !purposeChars.length) return;
+              const revealProgress = gsap.utils.clamp(0, 1, (progress - 0.4) / 0.42);
+              const index = Math.min(purposeChars.length - 1, Math.max(0, Math.round(revealProgress * purposeChars.length) - 1));
+              const target = purposeChars[index];
+              const titleRect = purposeTitle.getBoundingClientRect();
+              const charRect = target.getBoundingClientRect();
+              gsap.set(purposeCursor, {
+                x: charRect.right - titleRect.left + 3,
+                y: charRect.top - titleRect.top + charRect.height * 0.12,
+                height: charRect.height * 0.76,
+              });
+            };
+
+            gsap.set(purposeEl, { yPercent: 24 });
+            gsap.set([purposeEyebrow, purposeRule, purposeBody, manifesto], { opacity: 0 });
+            gsap.set([purposeEyebrow, purposeBody, manifesto], { y: 10 });
+            gsap.set(purposeRule, { scaleX: 0 });
+            gsap.set(purposeChars, { opacity: 0.08 });
+            gsap.set(purposeCursor, { opacity: 0 });
+
+            gsap.timeline({
+              defaults: { ease: "none" },
+              scrollTrigger: {
+                id: "jeffsat-purpose-mobile-handoff",
+                trigger: purposeEl,
+                start: "top bottom",
+                end: "+=145svh",
+                scrub: 0.25,
+                invalidateOnRefresh: true,
+                onUpdate: self => updateCursor(self.progress),
+                onRefresh: self => updateCursor(self.progress),
+              },
+            })
+              .to(purposeEl, { yPercent: 0, duration: 0.3 }, 0)
+              .to(purposeEyebrow, { opacity: 1, y: 0, duration: 0.1 }, 0.3)
+              .to(purposeRule, { opacity: 1, scaleX: 1, duration: 0.1 }, 0.36)
+              .to(purposeCursor, { opacity: 1, duration: 0.04 }, 0.4)
+              .to(purposeChars, { opacity: 1, duration: 0.42, stagger: { each: 0.006, from: "start" } }, 0.4)
+              .to(purposeCursor, { opacity: 0, duration: 0.1 }, 0.82)
+              .to([purposeBody, manifesto], { opacity: 1, y: 0, duration: 0.08, stagger: 0.03 }, 0.92);
+
+          } else {
           const purposeTimeline = gsap.timeline({
             paused: true,
             defaults: { ease: "power2.out" },
@@ -208,6 +260,40 @@ export function HeroMotion({ children, header }: Props) {
             .to(purposeLines, { opacity: 1, yPercent: 0, duration: 0.3, stagger: 0.045 }, 0.28)
             .to(purposeBody, { opacity: 1, y: 0, duration: 0.24 }, 0.53)
             .to(manifesto, { opacity: 1, y: 0, duration: 0.24 }, 0.7);
+          }
+        }
+
+        if (mobile) {
+          gsap.utils.toArray<HTMLElement>(".solution-card").forEach((card) => {
+            const image = card.querySelector(".solution-image img");
+            const label = card.querySelector(".solution-label");
+            const body = card.querySelectorAll("h3, p, .button");
+            gsap.timeline({
+              scrollTrigger: { trigger: card, start: "top 82%", toggleActions: "play reverse play reverse" },
+              defaults: { ease: "power2.out" },
+            })
+              .fromTo(image, { scale: 1.015 }, { scale: 1, duration: 0.42 }, 0)
+              .fromTo(label, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.24 }, 0.04)
+              .fromTo(body, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.3, stagger: 0.035 }, 0.14);
+          });
+
+          gsap.utils.toArray<HTMLElement>(".audience-card").forEach((card) => {
+            gsap.timeline({
+              scrollTrigger: { trigger: card, start: "top 82%", toggleActions: "play reverse play reverse" },
+              defaults: { ease: "power2.out" },
+            })
+              .fromTo(card.querySelector(".audience-image img"), { opacity: 0.86, scale: 1.018 }, { opacity: 1, scale: 1, duration: 0.36 }, 0)
+              .fromTo(card.querySelectorAll("h3, .audience-content > p, li, .button"), { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.28, stagger: 0.03 }, 0.08);
+          });
+
+          gsap.utils.toArray<HTMLElement>(".projects-grid article").forEach((project) => {
+            gsap.timeline({
+              scrollTrigger: { trigger: project, start: "top 86%", toggleActions: "play reverse play reverse" },
+              defaults: { ease: "power2.out" },
+            })
+              .fromTo(project.querySelector(".project-image"), { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.28 }, 0)
+              .fromTo(project.querySelectorAll("h3, p"), { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.24, stagger: 0.035 }, 0.1);
+          });
         }
 
         // Faded controls stay in the accessibility tree and tab order. Focusing
@@ -224,7 +310,7 @@ export function HeroMotion({ children, header }: Props) {
         element.addEventListener("focusin", revealFocusedControl);
         return () => {
           element.removeEventListener("focusin", revealFocusedControl);
-          shell.classList.remove("is-past-hero");
+          shell.classList.remove("is-past-hero", "is-storytelling");
           delete story.dataset.active;
         };
       });
