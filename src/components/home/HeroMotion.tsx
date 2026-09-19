@@ -223,7 +223,7 @@ export function HeroMotion({ children, header }: Props) {
           if (mobile) {
             const updateCursor = (progress: number) => {
               if (!purposeCursor || !purposeTitle || !purposeChars.length) return;
-              const revealProgress = gsap.utils.clamp(0, 1, (progress - 0.4) / 0.42);
+              const revealProgress = gsap.utils.clamp(0, 1, (progress - 0.2) / 0.3);
               const index = Math.min(purposeChars.length - 1, Math.max(0, Math.round(revealProgress * purposeChars.length) - 1));
               const target = purposeChars[index];
               const titleRect = purposeTitle.getBoundingClientRect();
@@ -248,7 +248,7 @@ export function HeroMotion({ children, header }: Props) {
                 id: "jeffsat-purpose-mobile-handoff",
                 trigger: purposeEl,
                 start: "top bottom",
-                end: () => `+=${window.innerHeight * 1.45}`,
+                end: () => `+=${window.innerHeight * 0.9}`,
                 scrub: 0.25,
                 invalidateOnRefresh: true,
                 onUpdate: self => updateCursor(self.progress),
@@ -258,10 +258,10 @@ export function HeroMotion({ children, header }: Props) {
               .to(purposeEl, { yPercent: 0, duration: 0.3 }, 0)
               .to(purposeEyebrow, { opacity: 1, y: 0, duration: 0.1 }, 0.3)
               .to(purposeRule, { opacity: 1, scaleX: 1, duration: 0.1 }, 0.36)
-              .to(purposeCursor, { opacity: 1, duration: 0.04 }, 0.4)
-              .to(purposeChars, { autoAlpha: 1, duration: 0.03, stagger: { amount: 0.42, from: "start" } }, 0.4)
-              .to(purposeCursor, { opacity: 0, duration: 0.08 }, 0.86)
-              .to([purposeBody, manifesto], { opacity: 1, y: 0, duration: 0.08, stagger: 0.03 }, 0.92);
+              .to(purposeCursor, { opacity: 1, duration: 0.04 }, 0.2)
+              .to(purposeChars, { autoAlpha: 1, duration: 0.03, stagger: { amount: 0.3, from: "start" } }, 0.2)
+              .to(purposeCursor, { opacity: 0, duration: 0.08 }, 0.58)
+              .to([purposeBody, manifesto], { opacity: 1, y: 0, duration: 0.08, stagger: 0.03 }, 0.68);
 
           } else {
           const purposeTimeline = gsap.timeline({
